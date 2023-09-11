@@ -222,6 +222,8 @@ class TransformableBox extends StatefulWidget {
   /// Whether to paint the handle's bounds for debugging purposes.
   final bool debugPaintHandleBounds;
 
+  final List<Positioned> children;
+
   /// Creates a [TransformableBox] widget.
   const TransformableBox({
     super.key,
@@ -234,6 +236,7 @@ class TransformableBox extends StatefulWidget {
     this.handleAlignment = HandleAlignment.center,
     this.enabledHandles = const {...HandlePosition.values},
     this.visibleHandles = const {...HandlePosition.values},
+    this.children=const <Positioned>[],
 
     // Raw values.
     Rect? rect,
@@ -598,6 +601,7 @@ class _TransformableBoxState extends State<TransformableBox> {
                 onPanCancel: () => onHandlePanCancel(handle),
                 builder: widget.sideHandleBuilder,
               ),
+          ...widget.children,
         ],
       ),
     );
