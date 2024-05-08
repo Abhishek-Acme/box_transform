@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:box_transform/box_transform.dart';
+import 'package:defer_pointer/defer_pointer.dart';
 import 'package:flutter/material.dart';
 
 import 'handle_builders.dart';
@@ -222,7 +223,13 @@ class TransformableBox extends StatefulWidget {
   /// Whether to paint the handle's bounds for debugging purposes.
   final bool debugPaintHandleBounds;
 
+  /// Widget to be positioned in the stack other than [TransformableBox]
   final List<Positioned> children;
+
+  /// Hit test a widget outside the parent bounds
+  /// Must wrap with [DeferredPointerHandler] somewhere above the buttons
+  /// that you wish to hit-test if enabled.
+  final bool shouldDeferPointer;
 
   /// Creates a [TransformableBox] widget.
   const TransformableBox({
@@ -236,7 +243,8 @@ class TransformableBox extends StatefulWidget {
     this.handleAlignment = HandleAlignment.center,
     this.enabledHandles = const {...HandlePosition.values},
     this.visibleHandles = const {...HandlePosition.values},
-    this.children=const <Positioned>[],
+    this.children = const <Positioned>[],
+    this.shouldDeferPointer = false,
 
     // Raw values.
     Rect? rect,
@@ -556,6 +564,10 @@ class _TransformableBoxState extends State<TransformableBox> {
       );
     }
 
+    if (widget.shouldDeferPointer) {
+      content = DeferPointer(child: content);
+    }
+
     return Positioned.fromRect(
       rect: rect.inflate(widget.handleAlignment.offset(widget.handleTapSize)),
       child: Stack(
@@ -577,6 +589,7 @@ class _TransformableBoxState extends State<TransformableBox> {
                 key: ValueKey(handle),
                 handlePosition: handle,
                 handleTapSize: widget.handleTapSize,
+                shouldDeferPointer: widget.shouldDeferPointer,
                 enabled: widget.enabledHandles.contains(handle),
                 visible: widget.visibleHandles.contains(handle),
                 onPanStart: (event) => onHandlePanStart(event, handle),
@@ -593,6 +606,7 @@ class _TransformableBoxState extends State<TransformableBox> {
                 key: ValueKey(handle),
                 handlePosition: handle,
                 handleTapSize: widget.handleTapSize,
+                shouldDeferPointer: widget.shouldDeferPointer,
                 enabled: widget.enabledHandles.contains(handle),
                 visible: widget.visibleHandles.contains(handle),
                 onPanStart: (event) => onHandlePanStart(event, handle),

@@ -1,4 +1,5 @@
 import 'package:box_transform/box_transform.dart';
+import 'package:defer_pointer/defer_pointer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -38,6 +39,9 @@ class CornerHandleWidget extends StatelessWidget {
   /// Whether to paint the handle's bounds for debugging purposes.
   final bool debugPaintHandleBounds;
 
+  /// Whether to hit test a widget outside its parent bounds.
+  final bool shouldDeferPointer;
+
   /// Creates a new handle widget.
   CornerHandleWidget({
     super.key,
@@ -50,6 +54,7 @@ class CornerHandleWidget extends StatelessWidget {
     this.onPanCancel,
     this.enabled = true,
     this.visible = true,
+    this.shouldDeferPointer = false,
     this.debugPaintHandleBounds = false,
   }) : assert(handlePosition.isDiagonal, 'A corner handle must be diagonal.');
 
@@ -70,6 +75,10 @@ class CornerHandleWidget extends StatelessWidget {
           child: child,
         ),
       );
+    }
+
+    if (shouldDeferPointer) {
+      child = DeferPointer(child: child);
     }
 
     if (kDebugMode && debugPaintHandleBounds) {
@@ -139,6 +148,9 @@ class SideHandleWidget extends StatelessWidget {
   /// Whether to paint the handle's bounds for debugging purposes.
   final bool debugPaintHandleBounds;
 
+  /// Whether to hit test a widget outside its parent bounds.
+  final bool shouldDeferPointer;
+
   /// Creates a new handle widget.
   SideHandleWidget({
     super.key,
@@ -151,6 +163,7 @@ class SideHandleWidget extends StatelessWidget {
     this.onPanCancel,
     this.enabled = true,
     this.visible = true,
+    this.shouldDeferPointer = false,
     this.debugPaintHandleBounds = false,
   }) : assert(handlePosition.isSide, 'A cardinal handle must be cardinal.');
 
@@ -171,6 +184,10 @@ class SideHandleWidget extends StatelessWidget {
           child: child,
         ),
       );
+    }
+
+    if (shouldDeferPointer) {
+      child = DeferPointer(child: child);
     }
 
     if (kDebugMode && debugPaintHandleBounds) {
